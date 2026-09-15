@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "package": "com.infotainer.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "HudRenderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
