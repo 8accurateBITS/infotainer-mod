@@ -1,0 +1,61 @@
+plugins {
+	id 'fabric-loom' version '1.4.+'
+	id 'maven-publish'
+}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+	mavenCentral()
+	maven { url "https://maven.terraformersmc.com/releases" }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:26.2"
+	mappings loom.officialMojangMappings()
+	
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	
+	// Mod Menu
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "mod_name", project.mod_name
+	inputs.property "mod_id", project.mod_id
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version,
+			"mod_name": project.mod_name,
+			"mod_id": project.mod_id
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+}
+
+jar {
+	from "LICENSE"
+}
+
+publishingWithBuildInfo = {
+	repositories {
+		maven {
+			directory = file("${buildDir}/repo")
+		}
+	}
+}
+
+apply from: "build/publish.gradle"
