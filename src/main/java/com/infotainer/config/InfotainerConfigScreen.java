@@ -4,7 +4,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.client.gui.DrawContext;
 
@@ -27,12 +26,6 @@ public class InfotainerConfigScreen extends Screen {
 
         int y = 30;
         int spacing = 30;
-
-        // Title
-        this.addDrawableChild(new ButtonWidget.Builder(
-            Text.literal("Infotainer Configuration"),
-            button -> {}
-        ).position(this.width / 2 - 100, 10).width(200).build());
 
         // Twitch Channel
         this.addDrawableChild(new ButtonWidget.Builder(

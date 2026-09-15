@@ -4,8 +4,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +11,7 @@ import com.infotainer.config.ModConfig;
 
 public class TwitchApiClient {
     private static final String TWITCH_API_URL = "https://api.twitch.tv/helix";
-    private static final String TWITCH_CLIENT_ID = "YOUR_CLIENT_ID_HERE"; // Set this to your app's client ID
+    private static final String TWITCH_CLIENT_ID = "YOUR_CLIENT_ID_HERE";
     private static HttpClient httpClient;
     private static long lastFollowerCount = 0;
     private static long lastUpdateTime = 0;
@@ -25,7 +23,6 @@ public class TwitchApiClient {
     public static long getFollowerCount(String channelName) {
         ModConfig.ConfigData config = ModConfig.get();
         
-        // Check if we should update (based on updateInterval)
         long now = System.currentTimeMillis();
         if (now - lastUpdateTime < config.updateInterval * 1000) {
             return lastFollowerCount;
@@ -37,13 +34,11 @@ public class TwitchApiClient {
         }
 
         try {
-            // Get user ID first
             String userId = getUserId(channelName);
             if (userId == null) {
                 return -1;
             }
 
-            // Get follower count
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(TWITCH_API_URL + "/channels/followers?broadcaster_id=" + userId))
                 .header("Authorization", "Bearer " + config.twitchOAuthToken)

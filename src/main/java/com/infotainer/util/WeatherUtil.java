@@ -1,9 +1,6 @@
 package com.infotainer.util;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.LevelProperties;
 
 public class WeatherUtil {
     public static String getWeatherInfo() {
@@ -30,8 +27,7 @@ public class WeatherUtil {
             return 15.0f;
         }
 
-        // Get biome temperature at player position
-        BlockPos pos = client.player.getBlockPos();
+        net.minecraft.util.math.BlockPos pos = client.player.getBlockPos();
         return client.world.getBiome(pos).value().getTemperature();
     }
 }

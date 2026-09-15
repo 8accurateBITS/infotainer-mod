@@ -6,14 +6,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.DrawContext;
 
 import com.infotainer.config.ModConfig;
 import com.infotainer.util.DateTimeUtil;
 import com.infotainer.util.TwitchApiClient;
 import com.infotainer.util.WeatherUtil;
-import net.minecraft.client.gui.DrawContext;
 
 @Mixin(InGameHud.class)
 public class HudRenderMixin {
@@ -29,12 +27,9 @@ public class HudRenderMixin {
         int lineHeight = 12;
         int x = config.hudX;
         int y = config.hudY;
-        int maxWidth = 0;
 
-        // Calculate position based on alignment
         String[] lines = getHudLines();
         
-        // Render each line
         for (int i = 0; i < lines.length; i++) {
             if (lines[i] != null && !lines[i].isEmpty()) {
                 context.drawTextWithBackground(
@@ -60,7 +55,7 @@ public class HudRenderMixin {
         if (config.showTwitchFollowers && !config.twitchChannelName.isEmpty()) {
             long followers = TwitchApiClient.getFollowerCount(config.twitchChannelName);
             if (followers >= 0) {
-                lines.add("Followers: " + followers);
+                lines.add("👥 Followers: " + followers);
             }
         }
 
