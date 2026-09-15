@@ -14,16 +14,4 @@ public class DateTimeUtil {
 
         return now.format(DateTimeFormatter.ofPattern(pattern));
     }
-
-    public static String getCurrentDate() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    }
-
-    public static String getCurrentTime() {
-        LocalDateTime now = LocalDateTime.now();
-        ModConfig.ConfigData config = ModConfig.get();
-        String timeFormat = config.use12HourFormat ? "hh:mm:ss a" : "HH:mm:ss";
-        return now.format(DateTimeFormatter.ofPattern(timeFormat));
-    }
 }

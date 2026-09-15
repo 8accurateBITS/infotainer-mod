@@ -20,14 +20,4 @@ public class WeatherUtil {
             return "☀️ Clear";
         }
     }
-
-    public static float getTemperature() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world == null) {
-            return 15.0f;
-        }
-
-        net.minecraft.util.math.BlockPos pos = client.player.getBlockPos();
-        return client.world.getBiome(pos).value().getTemperature();
-    }
 }

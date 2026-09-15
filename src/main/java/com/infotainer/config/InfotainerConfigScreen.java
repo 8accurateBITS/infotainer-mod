@@ -27,12 +27,6 @@ public class InfotainerConfigScreen extends Screen {
         int y = 30;
         int spacing = 30;
 
-        // Twitch Channel
-        this.addDrawableChild(new ButtonWidget.Builder(
-            Text.literal("Twitch Channel: " + config.twitchChannelName),
-            button -> {}
-        ).position(10, y).width(200).build());
-
         twitchChannelInput = new TextFieldWidget(this.textRenderer, 220, y, 150, 20, Text.literal("Twitch Channel"));
         twitchChannelInput.setText(config.twitchChannelName);
         this.addSelectableChild(twitchChannelInput);
@@ -40,23 +34,11 @@ public class InfotainerConfigScreen extends Screen {
 
         y += spacing;
 
-        // Twitch OAuth Token
-        this.addDrawableChild(new ButtonWidget.Builder(
-            Text.literal("OAuth Token"),
-            button -> {}
-        ).position(10, y).width(200).build());
-
         twitchTokenInput = new TextFieldWidget(this.textRenderer, 220, y, 150, 20, Text.literal("OAuth Token"));
         twitchTokenInput.setText(config.twitchOAuthToken);
         this.addSelectableChild(twitchTokenInput);
 
         y += spacing;
-
-        // HUD Position X
-        this.addDrawableChild(new ButtonWidget.Builder(
-            Text.literal("HUD X Position: " + config.hudX),
-            button -> {}
-        ).position(10, y).width(200).build());
 
         hudXInput = new TextFieldWidget(this.textRenderer, 220, y, 150, 20, Text.literal("X Position"));
         hudXInput.setText(String.valueOf(config.hudX));
@@ -64,35 +46,19 @@ public class InfotainerConfigScreen extends Screen {
 
         y += spacing;
 
-        // HUD Position Y
-        this.addDrawableChild(new ButtonWidget.Builder(
-            Text.literal("HUD Y Position: " + config.hudY),
-            button -> {}
-        ).position(10, y).width(200).build());
-
         hudYInput = new TextFieldWidget(this.textRenderer, 220, y, 150, 20, Text.literal("Y Position"));
         hudYInput.setText(String.valueOf(config.hudY));
         this.addSelectableChild(hudYInput);
 
-        y += spacing;
-
-        // Alignment
-        this.addDrawableChild(new CyclingButtonWidget.Builder<>(ModConfig.ConfigData.HudAlignment.class)
-            .omitKeyText()
-            .build(10, y, 200, 20, Text.literal("Alignment: "), (button, alignment) -> {
-                config.alignment = alignment;
-            }, config.alignment));
-
         y += spacing + 10;
 
-        // Display toggles
         this.addDrawableChild(new ButtonWidget.Builder(
             Text.literal(config.showDateTime ? "✓ Show Date/Time" : "✗ Show Date/Time"),
             button -> config.showDateTime = !config.showDateTime
         ).position(10, y).width(200).build());
 
         this.addDrawableChild(new ButtonWidget.Builder(
-            Text.literal(config.showTwitchFollowers ? "✓ Show Twitch Followers" : "✗ Show Twitch Followers"),
+            Text.literal(config.showTwitchFollowers ? "✓ Show Twitch" : "✗ Show Twitch"),
             button -> config.showTwitchFollowers = !config.showTwitchFollowers
         ).position(220, y).width(200).build());
 
@@ -105,13 +71,11 @@ public class InfotainerConfigScreen extends Screen {
 
         y += spacing + 20;
 
-        // Save button
         this.addDrawableChild(new ButtonWidget.Builder(
             Text.literal("Save"),
             button -> saveSettings()
         ).position(this.width / 2 - 105, y).width(100).build());
 
-        // Done button
         this.addDrawableChild(new ButtonWidget.Builder(
             Text.literal("Done"),
             button -> this.close()

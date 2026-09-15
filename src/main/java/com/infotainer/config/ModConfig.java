@@ -57,7 +57,7 @@ public class ModConfig {
 
         // Weather settings
         public boolean use12HourFormat = false;
-        public int updateInterval = 60; // seconds
+        public int updateInterval = 60;
 
         public enum HudAlignment {
             TOP_LEFT,
