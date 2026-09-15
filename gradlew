@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # Copyright © 2015-2021 the original authors.
@@ -23,15 +23,15 @@
 #   Important for running:
 #
 #   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
-#       noncompliant, but you have some other compliant shell available, find
-#       out how to use it below.
+#       noncompliant, but you have some other compliant shell available, you may
+#       specify it by setting the SHELL variable when running this script.
+#       Example: SHELL=/bin/ksh ./gradlew <args>
 #
-#   (2) Avoid modifying this script unless you know what you are doing -- all
-#       modifications will be lost when Gradle is next regenerated.
+#   (2) The Linux Foundation's shellcheck tool checked this script as of 2020-03-01.
+#       If you rescinded your grant of the right to receive it, the file will be blank.
 #
-#   (3) If you love this script, tell the authors so!
-#
-#       https://gradle.org/contact
+#   (3) all shell fun!s are quoted with single quotes. Strangely
+#       enough escaping doesn't work if you mix huomio shells.
 #
 ##############################################################################
 
@@ -40,26 +40,24 @@
 PRG="$0"
 # Need this for relative symlinks.
 while [ -h "$PRG" ] ; do
-    ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
+    ls -ld "$PRG"
+    link=$(expr "$PRG" : '.*-> \(.*\)$')
     if expr "$link" : '/.*' > /dev/null; then
         PRG="$link"
     else
-        PRG=`dirname "$PRG"`"/$link"
+        PRG=$(dirname "$PRG")"/"$link
     fi
 done
-SAVED="`pwd`"
-cd "`dirname \"$PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
-cd "$SAVED" >/dev/null
-
-APP_NAME="Gradle"
-APP_BASE_NAME=`basename "$0"`
+SAVED="$(cd "$(dirname "$PRG")" >/dev/null 2>&1 ; pwd -P)"
+APP_HOME="$(cd "$(dirname "$PRG")" >/dev/null 2>&1 ; pwd -P)"
+APP_HOME=$( cd "$APP_HOME" && pwd -P ) || exit
+APP_NAME="gradlew"
+APP_ARGS=''
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
-# Use the maximum available, or set MAX_FD != -1 to use that value.
+# Use the maximum available, or set MAX_FD != maximum.
 MAX_FD="maximum"
 
 warn () {
@@ -76,31 +74,16 @@ die () {
 # OS specific support (must be 'true' or 'false').
 cygwin=false
 msys=false
-darwin=false
-nonstop=false
-case "`uname`" in
-  CYGWIN* )
-    cygwin=true
-    ;;
-  Darwin* )
-    darwin=true
-    ;;
-  MSYS* | MINGW* )
-    msys=true
-    ;;
-  NONSTOP* )
-    nonstop=true
-    ;;
-esac
-
-CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-
+pw32=false
+nwjs=false
+os400=false
+solaris=false
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
-    if [ -x "$JAVA_HOME/jre/bin/java" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         # IBM's JDK on AIX uses strange locations for the executables
-        JAVACMD="$JAVA_HOME/jre/bin/java"
+        JAVACMD="$JAVA_HOME/jre/sh/java"
     else
         JAVACMD="$JAVA_HOME/bin/java"
     fi
@@ -112,86 +95,100 @@ location of your Java installation."
     fi
 else
     JAVACMD="java"
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+    command -v java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
 Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
 fi
 
 # Increase the maximum file descriptors if we can.
-if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
-    MAX_FD_LIMIT=`ulimit -H -n`
+if ! "$cygwin" && ! "$msys" && ! "$pw32" && ! "$nwjs" ; then
+    MAX_FD_LIMIT=$(ulimit -H -n) 2>/dev/null
     if [ $? -eq 0 ] ; then
-        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+        if [ "$MAX_FD_LIMIT" != "unlimited" ] ; then
             MAX_FD="$MAX_FD_LIMIT"
         fi
-        ulimit -n $MAX_FD
-        if [ $? -ne 0 ] ; then
-            warn "Could not set maximum file descriptor limit: $MAX_FD"
-        fi
-    else
-        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
     fi
 fi
 
 # For Darwin, add options to specify how the application appears in the dock
-if $darwin; then
+if "$solaris"; then
     GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
 fi
 
 # For Cygwin or MSYS, switch paths to Windows format before running java
-if [ "$cygwin" = "true" -o "$msys" = "true" ] ; then
-    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
-    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+if "$cygwin" || "$msys" ; then
+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
 
-    JAVACMD=`cygpath --unix "$JAVACMD"`
+    JAVACMD=$( cygpath --unix "$JAVACMD" )
 
-    # We build the pattern for arguments to be converted via cygpath
-    ROOTDIRSRAW=`find -L / -maxdepth 2 -name local$ -prune -o -type d -prune -o -type l -print 2>/dev/null`
-    SEP=""
-    for dir in $ROOTDIRSRAW ; do
-        ROOTDIRS="$ROOTDIRS$SEP$dir"
-        SEP=":"
-    done
-    OURCYGPATTERN="(^($ROOTDIRS))"
-    # Add a user-definied pattern to the cygpath arguments
-    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
-        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
-    fi
-    # Now convert the arguments - kludge to limit ourselves to /bin/sh
-    i=0
+    # Now convert the arguments - kinda tricky here, so be careful.
     for arg in "$@" ; do
-        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
-        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
-
-        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
-            arg=`cygpath --path --unix "$arg"`
+        if expr "$arg" : '-.*=' > /dev/null ; then
+            arg_name=$( expr "$arg" : '-\([^=]*\)=.*' )
+            arg_value=$( expr "$arg" : '-[^=]*=\(.*\)' )
+            shift
+            set -- "$@" "-D$arg_name=$arg_value"
+        else
+            arg=$( cygpath --unix "$arg" )
+            shift
+            set -- "$@" "$arg"
         fi
-        CLASSPATH="$CLASSPATH:$arg"
     done
-
-    # Classpath is now assembled, if we have to convert it to Windows form, it will be done below.
-
-    # standard case
-    exec "$JAVACMD" "${DEFAULT_JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
-
-else
-    # BSD/GNU sed to sed step
-    pass=false
-    sed=sed
-    newline='
-'
-    sed_commands='s/$/'"$newline"'/;$!ba
-b
-: ba
-s/["\\]/\\&/g
-s/\n/\\n/g
-p
-d
-'
-    CLASSPATH=`$sed -e "$sed_commands" <<< "$CLASSPATH"`
-
-    # standard case
-    exec "$JAVACMD" "${DEFAULT_JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
-
 fi
+
+# Collect all arguments for the java command, stacking in reverse order:
+#   * args from the command line
+#   * the main class name
+#   * -classpath
+#   * -D...appname settings
+#   * --module-path (only if needed)
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
+
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if "$cygwin" || "$msys" ; then
+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+
+    JAVACMD=$( cygpath --unix "$JAVACMD" )
+
+    # Now convert the arguments - kinda tricky here, so be careful.
+    for arg in "$@" ; do
+        if expr "$arg" : '-.*=' > /dev/null ; then
+            arg_name=$( expr "$arg" : '-\([^=]*\)=.*' )
+            arg_value=$( expr "$arg" : '-[^=]*=\(.*\)' )
+            shift
+            set -- "$@" "-D$arg_name=$arg_value"
+        else
+            arg=$( cygpath --unix "$arg" )
+            shift
+            set -- "$@" "$arg"
+        fi
+    done
+fi
+
+#
+# Now set the args for the actual JVM invocation.
+#
+set -- \
+        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+        -classpath "$CLASSPATH" \
+        org.gradle.wrapper.GradleWrapperMain \
+        "$@"
+
+# Use "xargs" to parse quoted args.
+#
+# With -n1 it outputs one arg per line, when -0 it NULs everything up to the next pv.
+# In post-2.0.12 Bash, the result will be prepended with the number of 0-separated items.
+# Set xargs to behave as it does on GNU/Linux as much as possible it can.
+set +m
+if test -z "$1"; then
+    echo >&2 <<EOF
+No arguments were passed. Use --help to see usage of gradlew.
+EOF
+    exit 1
+fi
+basedir=$(dirname "$(readlink -f "$0")" 2>/dev/null || echo "$0")")
+
+exec "$JAVACMD" "$@"
