@@ -45,6 +45,7 @@ public class ModConfig {
         public boolean showDateTime = true;
         public boolean showTwitchFollowers = true;
         public boolean showWeather = true;
+        public boolean showRSSFeed = true;
 
         // Position settings
         public int hudX = 10;
@@ -58,6 +59,11 @@ public class ModConfig {
         // Weather settings
         public boolean use12HourFormat = false;
         public int updateInterval = 60;
+
+        // RSS Feed settings
+        public String rssFeedUrl = "";
+        public int rssUpdateInterval = 300;
+        public int maxRSSItems = 5;
 
         public enum HudAlignment {
             TOP_LEFT,
