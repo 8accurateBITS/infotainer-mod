@@ -2,8 +2,8 @@ name: Build and Publish Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -28,16 +28,18 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Get version from tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      - name: Generate version from commit
+        id: version
+        run: |
+          VERSION=$(date +%Y.%m.%d)-$(git rev-parse --short HEAD)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: build/libs/*.jar
-          tag_name: ${{ steps.get_version.outputs.VERSION }}
-          body: "Release ${{ steps.get_version.outputs.VERSION }}"
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          body: "Automated release from commit ${{ github.sha }}"
           draft: false
           prerelease: false
         env:
