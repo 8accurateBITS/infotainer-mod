@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "infotainer",
+  "version": "${version}",
+  "name": "Infotainer",
+  "description": "A customizable HUD mod displaying date/time, Twitch followers, and weather",
+  "authors": [
+    "8accurateBITS"
+  ],
+  "contact": {
+    "sources": "https://github.com/8accurateBITS/infotainer-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/infotainer/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.infotainer.Infotainer"
+    ],
+    "modmenu": [
+      "com.infotainer.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "infotainer.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "26.2",
+    "java": ">=21",
+    "fabric-api": "*",
+    "modmenu": "*"
+  }
+}
